@@ -1,12 +1,12 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Iterable<BinarySearchTree.Entry<Key, Value>> {
 
     private Node root;
     private int size;
 
-    // Inner Node class for BST
     private static class Node<Key extends Comparable<Key>, Value> {
         private Key key;
         private Value value;
@@ -18,13 +18,11 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Ite
         }
     }
 
-    // Constructor to initialize BST
     public BinarySearchTree() {
         root = null;
         size = 0;
     }
 
-    // Method to add a new key-value pair to the BST
     public void put(Key key, Value value) {
         root = put(root, key, value);
     }
@@ -46,18 +44,33 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Ite
         return node;
     }
 
-    // Method to get the size of the BST
     public int size() {
         return size;
     }
 
-    // In-order traversal using an iterator
+
+    public Value find(Key key) {
+        return (Value) find(root, key);
+    }
+
+    private Value find(Node<Key, Value> node, Key key) {
+        if (node == null)
+            return null;
+
+        int cmp = key.compareTo(node.key);
+        if (cmp < 0)
+            return find(node.left, key);
+        else if (cmp > 0)
+            return find(node.right, key);
+        else
+            return node.value;
+    }
+
     @Override
     public Iterator<Entry<Key, Value>> iterator() {
         return new InOrderIterator();
     }
 
-    // Entry class to hold key and value together
     public static class Entry<Key, Value> {
         public Key key;
         public Value value;
@@ -68,7 +81,6 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Ite
         }
     }
 
-    // In-order iterator class
     private class InOrderIterator implements Iterator<Entry<Key, Value>> {
         private Node<Key, Value> current;
         private java.util.Stack<Node<Key, Value>> stack;
@@ -108,8 +120,16 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Ite
         tree.put(1, "Grapes");
         tree.put(4, "Mango");
 
-        for (Entry<Integer, String> elem : tree) {
-            System.out.println("key is " + elem.key + " and value is " + elem.value);
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the key to find its value: ");
+        int keyToFind = scanner.nextInt();
+        scanner.close();
+
+        String value = tree.find(keyToFind);
+        if (value != null) {
+            System.out.println("Value for key " + keyToFind + ": " + value);
+        } else {
+            System.out.println("Key not found!");
         }
     }
 }
